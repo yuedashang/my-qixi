@@ -202,6 +202,7 @@
             opacity: .0;
             pointer-events: none;
             animation: titleIn 1.2s ease 0.8s both;
+            white-space: nowrap;
         }
 
         body.dark .center-title {
@@ -465,6 +466,24 @@
 
         /* 手机端适配 */
         @media (max-width:480px) {
+
+            /* 爱心消息标签：手机端缩小，让爱心轮廓更清晰 */
+            .msg {
+                padding: 6px 10px;
+                border-radius: 12px;
+                font-size: clamp(11px, 2.6vmin, 15px);
+            }
+
+            .msg::before,
+            .msg::after {
+                width: 16px;
+                height: 24px;
+            }
+
+            .center-title {
+                font-size: clamp(14px, 3.2vmin, 20px);
+            }
+
             .letter {
                 padding: 24px 18px 22px;
                 max-height: 88vh;
@@ -618,9 +637,16 @@
         }
 
         function heartScale() {
-            const minDim = Math.min(window.innerWidth, window.innerHeight);
-            let s = Math.round(minDim * 0.023);
-            s = Math.max(8, Math.min(22, s));
+            const portrait = window.innerHeight > window.innerWidth;
+            let s;
+            if (portrait) {
+                // 竖屏手机：基于宽度放大系数，爱心更明显
+                s = Math.round(window.innerWidth * 0.028);
+            } else {
+                const minDim = Math.min(window.innerWidth, window.innerHeight);
+                s = Math.round(minDim * 0.023);
+            }
+            s = Math.max(8, Math.min(24, s));
             if (dark && eco) s = Math.max(8, Math.floor(s * 0.92));
             return s;
         }
@@ -628,7 +654,8 @@
         function centerYOffset() {
             const portrait = window.innerHeight > window.innerWidth;
             const minDim = Math.min(window.innerWidth, window.innerHeight);
-            return portrait ? -minDim * 0.06 : 0;
+            // 竖屏手机向上偏移更多，让爱心占据视觉中心
+            return portrait ? -minDim * 0.10 : 0;
         }
 
         function heartXY(t) {
@@ -737,9 +764,10 @@
             const minDim = Math.min(window.innerWidth, window.innerHeight);
             let TOTAL;
             if (minDim <= 420) {
-                TOTAL = dark ? (eco ? 80 : 110) : 150;
+                // 手机小屏：减少数量，避免爱心拥挤
+                TOTAL = dark ? (eco ? 50 : 64) : 80;
             } else if (minDim <= 720) {
-                TOTAL = dark ? (eco ? 96 : 130) : 180;
+                TOTAL = dark ? (eco ? 70 : 96) : 120;
             } else {
                 TOTAL = dark ? (eco ? 96 : 140) : 200;
             }
