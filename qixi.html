@@ -193,7 +193,7 @@
             position: absolute;
             left: 50%;
             top: 50%;
-            transform: translate(-50%, -50%);
+            transform: translate(-50%, -50%) translateY(var(--title-y, 0));
             font-weight: 800;
             letter-spacing: .12em;
             font-size: clamp(18px, 4vmin, 28px);
@@ -213,12 +213,12 @@
         @keyframes titleIn {
             from {
                 opacity: 0;
-                transform: translate(-50%, -55%);
+                transform: translate(-50%, -55%) translateY(var(--title-y, 0));
             }
 
             to {
                 opacity: .95;
-                transform: translate(-50%, -50%);
+                transform: translate(-50%, -50%) translateY(var(--title-y, 0));
             }
         }
 
@@ -482,6 +482,8 @@
 
             .center-title {
                 font-size: clamp(14px, 3.2vmin, 20px);
+                /* 与 centerYOffset() 保持一致：竖屏手机爱心上移 10%，标题跟随 */
+                --title-y: -10vh;
             }
 
             .letter {
@@ -653,9 +655,8 @@
 
         function centerYOffset() {
             const portrait = window.innerHeight > window.innerWidth;
-            const minDim = Math.min(window.innerWidth, window.innerHeight);
-            // 竖屏手机向上偏移更多，让爱心占据视觉中心
-            return portrait ? -minDim * 0.10 : 0;
+            // 竖屏手机向上偏移更多，让爱心占据视觉中心（与 CSS --title-y 同步）
+            return portrait ? -window.innerHeight * 0.10 : 0;
         }
 
         function heartXY(t) {
@@ -775,6 +776,8 @@
             lockedCount = 0;
             for (let i = 0; i < TOTAL; i++) createMsg(i, TOTAL);
 
+            // 标题与爱心中心同步偏移（手机端爱心上移，标题跟随）
+            title.style.setProperty('--title-y', centerYOffset() + 'px');
             setTimeout(() => { title.style.opacity = 1; }, 1400);
             playMusic();
         }
